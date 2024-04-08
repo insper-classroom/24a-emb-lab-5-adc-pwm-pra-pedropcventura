@@ -24,9 +24,10 @@ void uart_task(void *p) {
     adc_t data;
     int msb;
     int lsb;
-
+    int v;
     while (1) {
         if (xQueueReceive(xQueueAdc, &data, portMAX_DELAY) == pdTRUE) {
+            v = data.val/1000;
             msb = data.val >> 8;
             lsb = data.val & 0xFF;
             uart_putc_raw(uart0, data.axis);
@@ -44,15 +45,15 @@ void x_task(void *p) {
     adc_gpio_init(26); 
     adc_t data;
 
-    int nt;
+    
     while (1) {
         adc_select_input(0); 
         data.axis = 0;
-
+        int nt;
         nt = adc_read();
         nt -= 2048;
         nt = nt/8;
-        if (nt>-100&&nt<100){
+        if (nt>-30&&nt<30){
             nt = 0;
         }
         data.val = nt;
@@ -67,15 +68,15 @@ void y_task(void *p) {
     adc_gpio_init(27); 
     adc_t data;
 
-    int nt;
+    
     while (1) {
         adc_select_input(1); 
         data.axis = 1;
-
+        int nt;
         nt = adc_read();
         nt -= 2048;
         nt = 255*nt/2047;
-        if (nt>-100&&nt<100){
+        if (nt>-30&&nt<30){
             nt = 0;
         }
         data.val = nt;
