@@ -22,14 +22,11 @@ typedef struct adc {
 
 void uart_task(void *p) {
     adc_t data;
-    int msb;
-    int lsb;
-    int v;
     while (1) {
         if (xQueueReceive(xQueueAdc, &data, portMAX_DELAY) == pdTRUE) {
-            v = data.val/1000;
-            msb = data.val >> 8;
-            lsb = data.val & 0xFF;
+            int v = data.val/100;
+            int msb = v >> 8;
+            int lsb = v & 0xFF;
             uart_putc_raw(uart0, data.axis);
             uart_putc_raw(uart0, msb);
             uart_putc_raw(uart0, lsb);
